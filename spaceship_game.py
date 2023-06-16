@@ -61,9 +61,8 @@ LIMIT 5
 
 
 # Set up the display
-width, height = 200, 200
-screen = pygame.display.set_mode((width, height))
-#screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+width, height = 0, 0
+screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
 
 # Load spaceship image
 spaceship_image = pygame.image.load(config['images']['spaceship']).convert_alpha()

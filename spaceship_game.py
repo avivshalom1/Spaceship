@@ -287,7 +287,7 @@ while True:
 
         DrawAliens()
 
-        # last  
+        # final  
         pygame.display.flip()
 
  

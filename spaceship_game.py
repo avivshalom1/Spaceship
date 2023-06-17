@@ -10,6 +10,7 @@ import random
 import time
 
 from alien import Alien
+from special_alien import SpecialAlien
 from bullet import Bullet
 from spaceship import Spaceship
 
@@ -77,9 +78,17 @@ explosion_image = pygame.transform.scale(explosion_image, (300, 300))
 bullet_image = pygame.image.load(config['images']['bullet']).convert_alpha()
 bullet_image = pygame.transform.scale(bullet_image, (30, 30))
 
+special_alien_bullet_image = pygame.image.load(config['images']['special_alien_bullet']).convert_alpha()
+special_alien_bullet_image = pygame.transform.scale(special_alien_bullet_image, (30, 30))
+
 alien_image = pygame.image.load(config['images']['alien']).convert_alpha()
-alien_image = pygame.transform.scale(alien_image, (50, 50))
+alien_image = pygame.transform.scale(alien_image, (60, 60))
 Alien.alien_image = alien_image
+
+special_alien_image = pygame.image.load(config['images']['special_alien']).convert_alpha()
+special_alien_image = pygame.transform.scale(special_alien_image, (60, 60))
+SpecialAlien.alien_image = special_alien_image
+
 
 font = pygame.font.Font(None, 80)
 
@@ -171,8 +180,20 @@ def DrawAliens():
     for alien in aliens:
         alien.draw()
 
+def DrawSpecialAliens():
+
+    for special_alien in special_aliens:
+        special_alien.draw(spaceship.x, spaceship.y)
+        special_alien.shoot()
+
+
+
+
+    
+     
+
 def HandleEndOfGame(score):
-    if score > 10 and player_name.__len__() > 0:
+    if score > 10 and player_name != "":
         values = (player_name.strip(), score, datetime.date.today(), datetime.datetime.now().time())
         cursor.execute(insert_query, values)
         conn.commit()
@@ -183,7 +204,12 @@ def HandleEndOfGame(score):
 
 def CheckForCollision():
     for alien in aliens:
-        distance = math.sqrt((spaceship.x - alien.random_x)**2 + (spaceship.y - alien.random_y)**2)
+        distance = math.sqrt((spaceship.x - alien.x)**2 + (spaceship.y - alien.y)**2)
+        if distance < 50: 
+            HandleEndOfGame(score)
+
+    for special_alien in special_aliens:
+        distance = math.sqrt((spaceship.x - special_alien.x)**2 + (spaceship.y - special_alien.y)**2)
         if distance < 50: 
             HandleEndOfGame(score)
 
@@ -191,13 +217,27 @@ def CheckForCollision():
 def CheckForDeadAliens(score):
     for bullet in bullets:
         for alien in aliens:
-            distance = math.sqrt((bullet.x - alien.random_x)**2 + (bullet.y - alien.random_y)**2)
-            if distance < 20: # threshold = 10
+            distance = math.sqrt((bullet.x - alien.x)**2 + (bullet.y - alien.y)**2)
+            if distance < 20: 
                 bullets.remove(bullet)
                 aliens.remove(alien)
                 score += 10
-    
+
+        for special_alien in special_aliens:
+            distance = math.sqrt((bullet.x - special_alien.x)**2 + (bullet.y - special_alien.y)**2)
+            if distance < 20: 
+                bullets.remove(bullet)
+                special_aliens.remove(special_alien)
+                score += 15
+
     return score
+
+
+def UpdateLocations():
+    spaceship.update(is_exploding, rotate_angle)      
+
+    for bullet in bullets:
+        bullet.update()
 
 score = 0
 
@@ -226,11 +266,7 @@ while True:
         DisplayWelcomeScreen()
 
     else:
-        spaceship.update(is_exploding, rotate_angle)
-        
-        for bullet in bullets:
-            bullet.update()
-            
+
         spaceship.speed = base_speed
 
         if keys[pygame.K_UP]:
@@ -243,7 +279,7 @@ while True:
             rotate_angle -= angle_rate * (not is_exploding)
 
         if keys[pygame.K_DOWN]:
-            spaceship.speed = 2
+            spaceship.speed = 0
 
         if keys[pygame.K_SPACE]:
             if len(bullets) < 100:
@@ -283,8 +319,11 @@ while True:
             special_alien_timer = pygame.time.get_ticks() 
 
         if special_spawn_interval < (current_time - special_alien_timer) / 1000.0:
-            special_aliens.append(SpecialAlien(screen, special_alien_image))
-            spawn_interval = 0
+            special_aliens.append(SpecialAlien(screen, special_alien_image, special_alien_bullet_image))
+            special_spawn_interval = 0
+
+
+        UpdateLocations()
 
         score = CheckForDeadAliens(score)
 
@@ -297,6 +336,10 @@ while True:
         DrawBullets(rotate_angle)
 
         DrawAliens()
+
+        DrawSpecialAliens()
+
+
 
         pygame.display.flip()
 

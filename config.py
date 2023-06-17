@@ -13,7 +13,9 @@ config = {
         "background": "background.jpg",
         "explosion": "explosion.png",
         "bullet": "bullet.png",
-        "alien": "alien.png"
+        "alien": "alien.png",
+        "special_alien": "special_alien.png",
+        "special_alien_bullet": "special_alien_bullet.png"
     },
     "gameplay": {
         "speed": 3,

@@ -287,7 +287,7 @@ while True:
 
         DrawAliens()
 
-        # Update the display
+        # pandas
         pygame.display.flip()
 
  

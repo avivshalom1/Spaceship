@@ -83,7 +83,6 @@ Alien.alien_image = alien_image
 
 font = pygame.font.Font(None, 80)
 
-
 speed = config['gameplay']['speed']
 base_speed = speed
 bullet_speed = config['gameplay']['bullet_speed']
@@ -108,6 +107,9 @@ aliens = []
 
 Bullet.screen = screen
 Bullet.bullet_image = bullet_image
+
+Alien.screen = screen
+Alien.alien_image = alien_image
 
 player_name = ""
 
@@ -263,7 +265,7 @@ while True:
             # Check if the explosion duration has elapsed
             if elapsed_time < explosion_duration:
                 spaceship.spaceship_image = explosion_image
-
+                
             else:
                 HandleEndOfGame(score)
 
@@ -272,7 +274,7 @@ while True:
             alien_timer = pygame.time.get_ticks() 
         
         if spawn_interval < (current_time - alien_timer) / 1000.0:
-            aliens.append(Alien(screen, alien_image))
+            aliens.append(Alien(screen))
             spawn_interval = 0
 
         score = CheckForDeadAliens(score)

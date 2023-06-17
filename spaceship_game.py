@@ -287,7 +287,7 @@ while True:
 
         DrawAliens()
 
-        # pandass
+        # last  
         pygame.display.flip()
 
  

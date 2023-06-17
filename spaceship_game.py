@@ -147,7 +147,6 @@ def DisplayWelcomeScreen():
 def DrawSpaceshipInSpace():
 
     screen.blit(background_image, (0,0))
-
     spaceship.draw()
 
 def DrawScore(score):

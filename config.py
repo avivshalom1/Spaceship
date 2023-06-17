@@ -19,8 +19,7 @@ config = {
         "speed": 3,
         "bullet_speed": 5,
         "angle_rate": 1,
-        "explosion_duration": 0.5,
-        "spawn_interval": 0
+        "explosion_duration": 0.5
     }
 }
 

@@ -95,9 +95,11 @@ enter_key_pressed = False
 is_exploding = False
 
 explosion_duration = config['gameplay']['explosion_duration']
-spawn_interval = config['gameplay']['spawn_interval']
+spawn_interval = 0
+special_spawn_interval = 3
 explosion_timer = 0.0
 alien_timer = 0.0
+special_alien_timer = 0.0
 
 current_time = 0
 
@@ -105,6 +107,7 @@ current_time = 0
 spaceship = Spaceship(screen.get_width() // 2, 1000, rotate_angle, screen, spaceship_image)
 bullets = [] 
 aliens = []
+special_aliens = []
 
 Bullet.screen = screen
 Bullet.bullet_image = bullet_image
@@ -169,7 +172,7 @@ def DrawAliens():
         alien.draw()
 
 def HandleEndOfGame(score):
-    if score > 10:
+    if score > 10 and player_name.__len__() > 0:
         values = (player_name.strip(), score, datetime.date.today(), datetime.datetime.now().time())
         cursor.execute(insert_query, values)
         conn.commit()
@@ -270,9 +273,17 @@ while True:
         if spawn_interval == 0:
             spawn_interval = random.uniform(1, 2)
             alien_timer = pygame.time.get_ticks() 
-        
+
         if spawn_interval < (current_time - alien_timer) / 1000.0:
             aliens.append(Alien(screen, alien_image))
+            spawn_interval = 0
+
+        if special_spawn_interval == 0:
+            special_spawn_interval = random.uniform(1, 3)
+            special_alien_timer = pygame.time.get_ticks() 
+
+        if special_spawn_interval < (current_time - special_alien_timer) / 1000.0:
+            special_aliens.append(SpecialAlien(screen, special_alien_image))
             spawn_interval = 0
 
         score = CheckForDeadAliens(score)

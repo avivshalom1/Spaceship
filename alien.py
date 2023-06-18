@@ -1,13 +1,19 @@
 import random
 import pygame
+import math
 
 class Alien:
     screen = None
     alien_image = None
     
-    def __init__(self, screen, alien_image):
-        self.x = random.randint(0, screen.get_width())
-        self.y = random.randint(0, screen.get_height())
+    def __init__(self, screen, alien_image, spaceship):
+        distance  = 0
+
+        while(distance < 300):
+            self.x = random.randint(0, screen.get_width())
+            self.y = random.randint(0, screen.get_height())
+            distance = math.sqrt((self.x - spaceship.x)**2 + (self.y - spaceship.y)**2)
+
         self.screen = screen
         self.alien_image = alien_image
 

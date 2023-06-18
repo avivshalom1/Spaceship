@@ -1,6 +1,7 @@
 import random
 import pygame
 import json
+import math
 
 from special_alien_bullet import SpecialAlienBullet
 
@@ -8,9 +9,13 @@ class SpecialAlien:
     screen = None
     alien_image = None
 
-    def __init__(self, screen, special_alien_image, special_alien_bullet_image):
-        self.x = random.randint(0, screen.get_width())
-        self.y = random.randint(0, screen.get_height())
+    def __init__(self, screen, special_alien_image, special_alien_bullet_image, spaceship):
+        distance  = 0
+
+        while(distance < 300):
+            self.x = random.randint(0, screen.get_width())
+            self.y = random.randint(0, screen.get_height())
+            distance = math.sqrt((self.x - spaceship.x)**2 + (self.y - spaceship.y)**2)
 
         self.screen = screen
         self.special_alien_image = special_alien_image
@@ -34,7 +39,7 @@ class SpecialAlien:
         current_time = pygame.time.get_ticks()
 
         if self.bullet_interval == 0:
-            self.bullet_interval = 1
+            self.bullet_interval = 2
             self.bullet_timer = pygame.time.get_ticks() 
 
         if self.bullet_interval < (current_time - self.bullet_timer) / 1000.0:

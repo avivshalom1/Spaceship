@@ -15,20 +15,15 @@ class SpecialAlienBullet:
         self.special_alien_bullet_image = special_alien_bullet_image
         self.screen = screen
         self.special_alien_bullet_rect = self.special_alien_bullet_image.get_rect(center=(x, y))
-        self.speed = 3
+        self.speed = 1
     
     def update(self, spaceship_x, spaceship_y):
+        movement_vector = pygame.math.Vector2(spaceship_x - self.x, spaceship_y - self.y)
+        self.rotate_angle = math.degrees(movement_vector.angle_to(pygame.math.Vector2(0, -1)))
 
-        dx = spaceship_x - self.x
-        dy = spaceship_y - self.y 
-        angle = math.atan2(dy, dx)  # Angle in radians
-        self.rotate_angle = math.degrees(angle)
-
-        movement_vector = pygame.math.Vector2(0, -self.speed).rotate(-self.rotate_angle)
-
-        # Update the position using the direction vector
-        self.x += movement_vector.x 
-        self.y += movement_vector.y 
+        movement_vector.scale_to_length(self.speed)
+        self.x += movement_vector.x
+        self.y += movement_vector.y
 
     def draw(self):
         self.rotated_special_alien_bullet_image = pygame.transform.rotate(self.special_alien_bullet_image, self.rotate_angle)

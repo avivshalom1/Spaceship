@@ -60,7 +60,6 @@ ORDER BY score DESC
 LIMIT 5
 """
 
-
 # Set up the display
 width, height = 0, 0
 screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
@@ -337,7 +336,6 @@ def HandleInsertingName():
                 sys.exit()
             else:
                 player_name += event.unicode
-
 
 score = 0
 

@@ -10,6 +10,7 @@ import random
 import time
 
 from alien import Alien
+from special_alien import SpecialAlien
 from bullet import Bullet
 from spaceship import Spaceship
 
@@ -77,9 +78,17 @@ explosion_image = pygame.transform.scale(explosion_image, (300, 300))
 bullet_image = pygame.image.load(config['images']['bullet']).convert_alpha()
 bullet_image = pygame.transform.scale(bullet_image, (30, 30))
 
+special_alien_bullet_image = pygame.image.load(config['images']['special_alien_bullet']).convert_alpha()
+special_alien_bullet_image = pygame.transform.scale(special_alien_bullet_image, (30, 30))
+
 alien_image = pygame.image.load(config['images']['alien']).convert_alpha()
-alien_image = pygame.transform.scale(alien_image, (50, 50))
+alien_image = pygame.transform.scale(alien_image, (60, 60))
 Alien.alien_image = alien_image
+
+special_alien_image = pygame.image.load(config['images']['special_alien']).convert_alpha()
+special_alien_image = pygame.transform.scale(special_alien_image, (60, 60))
+SpecialAlien.alien_image = special_alien_image
+
 
 font = pygame.font.Font(None, 80)
 
@@ -94,9 +103,11 @@ enter_key_pressed = False
 is_exploding = False
 
 explosion_duration = config['gameplay']['explosion_duration']
-spawn_interval = config['gameplay']['spawn_interval']
+spawn_interval = 0
+special_spawn_interval = 3
 explosion_timer = 0.0
 alien_timer = 0.0
+special_alien_timer = 0.0
 
 current_time = 0
 
@@ -104,6 +115,7 @@ current_time = 0
 spaceship = Spaceship(screen.get_width() // 2, 1000, rotate_angle, screen, spaceship_image)
 bullets = [] 
 aliens = []
+special_aliens = []
 
 Bullet.screen = screen
 Bullet.bullet_image = bullet_image
@@ -144,8 +156,6 @@ def DisplayWelcomeScreen():
     pygame.display.flip()
 
 
-
-
 def DrawSpaceshipInSpace():
 
     screen.blit(background_image, (0,0))
@@ -170,8 +180,14 @@ def DrawAliens():
     for alien in aliens:
         alien.draw()
 
+def DrawSpecialAliens():
+
+    for special_alien in special_aliens:
+        special_alien.draw(spaceship.x, spaceship.y)
+        special_alien.shoot()
+
 def HandleEndOfGame(score):
-    if score > 10:
+    if score > 10 and player_name != "":
         values = (player_name.strip(), score, datetime.date.today(), datetime.datetime.now().time())
         cursor.execute(insert_query, values)
         conn.commit()
@@ -181,27 +197,133 @@ def HandleEndOfGame(score):
     sys.exit()
 
 def CheckForCollision():
+    global score
+
     for alien in aliens:
-        distance = math.sqrt((spaceship.x - alien.random_x)**2 + (spaceship.y - alien.random_y)**2)
+        distance = math.sqrt((spaceship.x - alien.x)**2 + (spaceship.y - alien.y)**2)
         if distance < 50: 
             HandleEndOfGame(score)
+
+    for special_alien in special_aliens:
+        distance = math.sqrt((spaceship.x - special_alien.x)**2 + (spaceship.y - special_alien.y)**2)
+        if distance < 50: 
+            HandleEndOfGame(score)
+
+    for special_alien in special_aliens:
+        for bullet in special_alien.bullets:
+            distance = math.sqrt((spaceship.x - bullet.x)**2 + (spaceship.y - bullet.y)**2)
+            if distance < 15: 
+                score -= 1
+                special_alien.bullets.remove(bullet)
+        
 
 
 def CheckForDeadAliens(score):
     for bullet in bullets:
         for alien in aliens:
-            distance = math.sqrt((bullet.x - alien.random_x)**2 + (bullet.y - alien.random_y)**2)
-            if distance < 20: # threshold = 10
+            distance = math.sqrt((bullet.x - alien.x)**2 + (bullet.y - alien.y)**2)
+            if distance < 20: 
                 bullets.remove(bullet)
                 aliens.remove(alien)
                 score += 10
-    
+
+        for special_alien in special_aliens:
+            distance = math.sqrt((bullet.x - special_alien.x)**2 + (bullet.y - special_alien.y)**2)
+            if distance < 20: 
+                bullets.remove(bullet)
+                special_aliens.remove(special_alien)
+                score += 15
+
     return score
 
-score = 0
 
-while True:
+def UpdateLocations():
+    spaceship.update(is_exploding, rotate_angle)      
 
+    for bullet in bullets:
+        bullet.update()
+
+
+def HandlePressedKey():
+
+    global rotate_angle
+
+    if keys[pygame.K_UP]:
+        spaceship.speed *= 1.5
+
+    if keys[pygame.K_LEFT]:
+        rotate_angle += angle_rate * (not is_exploding)
+
+    if keys[pygame.K_RIGHT]:
+        rotate_angle -= angle_rate * (not is_exploding)
+
+    if keys[pygame.K_DOWN]:
+        spaceship.speed = 1
+
+    if keys[pygame.K_SPACE]:
+        if len(bullets) < 100:
+            bullets.append(Bullet(spaceship.x, spaceship.y, rotate_angle))
+        
+    if keys[pygame.K_ESCAPE]:
+        pygame.quit()
+        sys.exit()
+
+
+def CheckIfOutOfSpace():
+
+    global is_exploding
+    global explosion_timer
+    global explosion_duration
+
+    # Check if the spaceship is within the boundaries of the screen
+    if not screen.get_rect().colliderect(spaceship.rotated_spaceship_rect):
+        is_exploding = True
+        if explosion_timer == 0:
+            explosion_timer = pygame.time.get_ticks() 
+
+    current_time = pygame.time.get_ticks()
+
+    if is_exploding:
+        elapsed_time = (current_time - explosion_timer) / 1000.0  # Convert to seconds
+        # Check if the explosion duration has elapsed
+        if elapsed_time < explosion_duration:
+            spaceship.spaceship_image = explosion_image
+
+        else:
+            HandleEndOfGame(score)
+
+    return current_time
+
+
+def SpawnAlien(spaceship):
+    global spawn_interval
+    global alien_timer
+
+    if spawn_interval == 0:
+        spawn_interval = random.uniform(1, 2)
+        alien_timer = pygame.time.get_ticks() 
+
+    if spawn_interval < (current_time - alien_timer) / 1000.0:
+        aliens.append(Alien(screen, alien_image, spaceship))
+        spawn_interval = 0
+
+
+def SpawnSpecialAlien(spaceship):
+    global special_spawn_interval
+    global special_alien_timer
+
+    if special_spawn_interval == 0:
+        special_spawn_interval = random.uniform(1, 3)
+        special_alien_timer = pygame.time.get_ticks() 
+
+    if special_spawn_interval < (current_time - special_alien_timer) / 1000.0:
+        special_aliens.append(SpecialAlien(screen, special_alien_image, special_alien_bullet_image, spaceship))
+        special_spawn_interval = 0
+
+
+def HandleInsertingName():
+
+    global player_name
     # Handle events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -216,6 +338,13 @@ while True:
             else:
                 player_name += event.unicode
 
+
+score = 0
+
+while True:
+
+    HandleInsertingName()
+
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_RETURN]:
@@ -225,63 +354,24 @@ while True:
         DisplayWelcomeScreen()
 
     else:
-        spaceship.update(is_exploding, rotate_angle)
-        
-        for bullet in bullets:
-            bullet.update()
-            
+
         spaceship.speed = base_speed
 
-        if keys[pygame.K_UP]:
-            spaceship.speed *= 1.5
+        HandlePressedKey()
 
-        if keys[pygame.K_LEFT]:
-            rotate_angle += angle_rate * (not is_exploding)
+        current_time = CheckIfOutOfSpace()
 
-        if keys[pygame.K_RIGHT]:
-            rotate_angle -= angle_rate * (not is_exploding)
+        DrawSpaceshipInSpace()
 
-        if keys[pygame.K_DOWN]:
-            spaceship.speed = 2
+        SpawnAlien(spaceship)
 
-        if keys[pygame.K_SPACE]:
-            if len(bullets) < 100:
-                bullets.append(Bullet(spaceship.x, spaceship.y, rotate_angle))
-            
-        if keys[pygame.K_ESCAPE]:
-            pygame.quit()
-            sys.exit()
+        SpawnSpecialAlien(spaceship)
 
-        # Check if the spaceship is within the boundaries of the screen
-        if not screen.get_rect().colliderect(spaceship.rotated_spaceship_rect):
-            is_exploding = True
-            if explosion_timer == 0:
-                explosion_timer = pygame.time.get_ticks() 
-
-        current_time = pygame.time.get_ticks()
-
-        if is_exploding:
-            elapsed_time = (current_time - explosion_timer) / 1000.0  # Convert to seconds
-            # Check if the explosion duration has elapsed
-            if elapsed_time < explosion_duration:
-                spaceship.spaceship_image = explosion_image
-                
-            else:
-                HandleEndOfGame(score)
-
-        if spawn_interval == 0:
-            spawn_interval = random.uniform(1, 2)
-            alien_timer = pygame.time.get_ticks() 
-        
-        if spawn_interval < (current_time - alien_timer) / 1000.0:
-            aliens.append(Alien(screen))
-            spawn_interval = 0
+        UpdateLocations()
 
         score = CheckForDeadAliens(score)
 
         CheckForCollision()
-
-        DrawSpaceshipInSpace()
 
         DrawScore(score)
 
@@ -289,10 +379,8 @@ while True:
 
         DrawAliens()
 
+        DrawSpecialAliens()
+
         pygame.display.flip()
-
-
-
- 
 
  #main branch

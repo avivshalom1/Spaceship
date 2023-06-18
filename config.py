@@ -13,14 +13,15 @@ config = {
         "background": "background.jpg",
         "explosion": "explosion.png",
         "bullet": "bullet.png",
-        "alien": "alien.png"
+        "alien": "alien.png",
+        "special_alien": "special_alien.png",
+        "special_alien_bullet": "special_alien_bullet.png"
     },
     "gameplay": {
         "speed": 3,
         "bullet_speed": 5,
         "angle_rate": 1,
-        "explosion_duration": 0.5,
-        "spawn_interval": 0
+        "explosion_duration": 0.5
     }
 }
 

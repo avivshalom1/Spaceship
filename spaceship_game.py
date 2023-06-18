@@ -16,20 +16,15 @@ from spaceship import Spaceship
 # Initialize Pygame
 pygame.init()
 
-print(3)
-
 # Read the configuration from the JSON file
 with open('config.json', 'r') as configfile:
     config = json.load(configfile)
-print(4)
 
 # Replace the connection details with your own
 host = config['database']['host']
 database = config['database']['name']
 user = config['database']['user']
 password = config['database']['password']
-
-print(5)
 
 # Establish the connection
 conn = mysql.connector.connect(
@@ -38,9 +33,6 @@ conn = mysql.connector.connect(
     user=user,
     password=password
 )
-
-print(6)
-
 
 # Create a cursor object to execute SQL queries
 cursor = conn.cursor()

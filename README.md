@@ -16,7 +16,7 @@ xhost +local:docker
 ```
 and than run the game:
 ```
-docker run --rm -it --volume /tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY   spaceship
+docker run --rm -it --volume /tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY ghcr.io/avivshalom1/spaceship/spaceship:latest
 ```
 
 ## How to Play

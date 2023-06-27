@@ -15,7 +15,10 @@ config = {
         "bullet": "bullet.png",
         "alien": "alien.png",
         "special_alien": "special_alien.png",
-        "special_alien_bullet": "special_alien_bullet.png"
+        "special_alien_bullet": "special_alien_bullet.png",
+        "alien_prize": "alien_prize.png",
+        "special_alien_prize": "special_alien_prize.png",
+
     },
     "gameplay": {
         "speed": 3,

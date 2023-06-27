@@ -13,12 +13,12 @@ class Spaceship:
         self.speed = 5  
         self.screen = screen
 
-    def update(self, is_exploding, rotate_angle):
+    def update(self, rotate_angle):
         
          self.rotate_angle = rotate_angle
          movement_vector = pygame.math.Vector2(0, -self.speed).rotate(-self.rotate_angle)
-         self.y += movement_vector.y * (not is_exploding)
-         self.x += movement_vector.x * (not is_exploding)
+         self.y += movement_vector.y 
+         self.x += movement_vector.x
 
     def draw(self):
         self.rotate_spaceship_image = pygame.transform.rotate(self.spaceship_image, self.rotate_angle)

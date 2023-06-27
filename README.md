@@ -7,7 +7,7 @@ This is a simple spaceship game built using the Pygame library. The objective of
 
 install from command line:
 ```
-docker pull ghcr.io/avivshalom1/spaceship/spaceship:latest
+sudo docker pull ghcr.io/avivshalom1/spaceship/spaceship:latest
 ```
 
 run this command:

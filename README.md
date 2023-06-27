@@ -25,6 +25,7 @@ This is a simple spaceship game built using the Pygame library. The objective of
 
 
 xhost +local:docker
+
 docker run --rm -it --volume /tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY   spaceship
 
 

@@ -5,6 +5,11 @@ This is a simple spaceship game built using the Pygame library. The objective of
 
 ## How to Run
 
+install from command line:
+```
+docker pull ghcr.io/avivshalom1/spaceship/spaceship:latest
+```
+
 run this command:
 ```
 xhost +local:docker

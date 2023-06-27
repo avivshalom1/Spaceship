@@ -276,22 +276,15 @@ def CheckIfOutOfSpace():
 
     # Check if the spaceship is within the boundaries of the screen
     if not screen.get_rect().colliderect(spaceship.rotated_spaceship_rect):
-        is_exploding = True
-        if explosion_timer == 0:
-            explosion_timer = pygame.time.get_ticks() 
-
-    current_time = pygame.time.get_ticks()
-
-    if is_exploding:
-        elapsed_time = (current_time - explosion_timer) / 1000.0  # Convert to seconds
-        # Check if the explosion duration has elapsed
-        if elapsed_time < explosion_duration:
-            spaceship.spaceship_image = explosion_image
-
-        else:
-            HandleEndOfGame(score)
-
-    return current_time
+        if spaceship.x < 0:
+            spaceship.x = screen.get_width()  
+        elif spaceship.x > screen.get_width():
+            spaceship.x = 0
+            
+        if spaceship.y < 0:
+            spaceship.y = screen.get_height()  
+        elif spaceship.y > screen.get_height():
+            spaceship.y = 0  
 
 
 def SpawnAlien(spaceship):
@@ -357,7 +350,7 @@ while True:
 
         HandlePressedKey()
 
-        current_time = CheckIfOutOfSpace()
+        CheckIfOutOfSpace()
 
         DrawSpaceshipInSpace()
 

@@ -1,6 +1,6 @@
 {
     "database": {
-        "host": "172.17.0.1",
+        "host": "10.1.0.240",
         "name": "spaceship_scoring_board",
         "user": "spaceship_user",
         "password": "Evi1995!!"

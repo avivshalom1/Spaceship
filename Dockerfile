@@ -35,3 +35,8 @@ RUN pip3 install pygame mysql-connector-python
 # Set the command to run the game
 CMD ["python", "spaceship_game.py"]
 
+#sudo docker build -t spaceship:latest .
+#sudo docker tag spaceship docker.pkg.github.com/avivshalom1/spaceship/spaceship:latest
+#sudo docker login docker.pkg.github.com -u avivshalom1 -p <TOKEN>
+#sudo docker push docker.pkg.github.com/avivshalom1/spaceship/spaceship
+

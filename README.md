@@ -11,16 +11,6 @@ This is a simple spaceship game built using the Pygame library. The objective of
  * Your score will increase for every alien you destroy.
  * The game ends if your spaceship collides with an alien.
 
-## Dependencies
-
-This game requires the following dependencies:
-
- * Python 3.x
- * Pygame
- * MySQL Connector (Python)
-
-Make sure you have these dependencies installed before running the game.
-
 
 ## Game Controls
 
@@ -31,13 +21,13 @@ Make sure you have these dependencies installed before running the game.
  * Spacebar: Shoot bullets.
  * Escape: Quit the game.
 
-
-## Database Connection
-
-The game connects to a MySQL database to store the player scores. The database connection details are in the code.
-Install the MySQL client: Ensure that you have the MySQL client installed on your computer. You can download the MySQL Community Edition from the official MySQL website (https://dev.mysql.com/downloads/) and select the appropriate version for your operating system.
-
 ## How to Run
+
+
+xhost +local:docker
+docker run --rm -it --volume /tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY   spaceship
+
+
 
  * Make sure you have the required dependencies installed.
  * Run the Python script spaceship_game.py.

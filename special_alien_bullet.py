@@ -26,7 +26,7 @@ class SpecialAlienBullet:
         self.y += movement_vector.y
 
     def draw(self):
-        self.rotated_special_alien_bullet_image = pygame.transform.rotate(self.special_alien_bullet_image, self.rotate_angle)
+        self.rotated_special_alien_bullet_image = pygame.transform.rotate(self.special_alien_bullet_image, 1)
         self.rotated_special_alien_bullet_rect = self.rotated_special_alien_bullet_image.get_rect(center = (self.x, self.y))
         self.screen.blit(self.rotated_special_alien_bullet_image, self.rotated_special_alien_bullet_rect)
 

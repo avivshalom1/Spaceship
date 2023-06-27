@@ -3,7 +3,7 @@ import json
 # Create the configuration dictionary
 config = {
     "database": {
-        "host": "10.10.2.41",
+        "host": "10.1.0.240",
         "name": "spaceship_scoring_board",
         "user": "spaceship_user",
         "password": "Evi1995!!"

@@ -101,7 +101,7 @@ end_of_game_sound = pygame.mixer.Sound('end_of_game.wav')
 start_game_sound = pygame.mixer.Sound('start_game.wav')
 dead_alien_sound = pygame.mixer.Sound('dead_alien.mp3')
 shoot_sound = pygame.mixer.Sound('shoot_sound.wav')
-shoot_sound.set_volume(0.1)
+shoot_sound.set_volume(0.3)
 
 pygame.mixer.set_num_channels(5)  # Adjust the number of channels as needed
 collect_prize_channel = pygame.mixer.Channel(0)  # Channel for sound1
@@ -190,7 +190,8 @@ def DrawScore(score):
 
 def DrawBullets(rotate_angle):
     for bullet in bullets:
-        bullet.draw()
+        if bullet.is_used == False:
+            bullet.draw()
 
     for bullet in bullets:
         if not screen.get_rect().colliderect(bullet.rotated_bullet_rect):
@@ -298,7 +299,7 @@ def CheckForDeadAliens(score):
             distance = math.sqrt((bullet.x - alien.x)**2 + (bullet.y - alien.y)**2)
             if distance < 20:
                 dead_alien_channel.play(dead_alien_sound)
-                bullets.remove(bullet)
+                bullet.is_used = True
                 alien.is_killed = True
                 alien.image = alien_prize_image
                 score += 5
@@ -307,7 +308,7 @@ def CheckForDeadAliens(score):
             distance = math.sqrt((bullet.x - special_alien.x)**2 + (bullet.y - special_alien.y)**2)
             if distance < 20: 
                 dead_alien_channel.play(dead_alien_sound)
-                bullets.remove(bullet)
+                bullet.is_used = True
                 special_alien.is_killed = True
                 special_alien.image = special_alien_prize_image
                 score += 10

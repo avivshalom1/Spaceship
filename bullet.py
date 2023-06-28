@@ -11,6 +11,7 @@ class Bullet:
         self.bullet_rect = self.bullet_image.get_rect(center=(x, y))
         self.rotate_angle = rotate_angle
         self.speed = 5
+        self.is_used = False
     
     def update(self):
         movement_vector = pygame.math.Vector2(0, -self.speed).rotate(-self.rotate_angle)

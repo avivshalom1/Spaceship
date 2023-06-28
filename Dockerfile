@@ -11,11 +11,18 @@ COPY . /Spaceship
 COPY requirements.txt .
 COPY background.jpg .
 COPY spaceship.png .
-COPY explosion.png .
 COPY bullet.png .
 COPY alien.png .
 COPY special_alien.png .
 COPY special_alien_bullet.png .
+COPY special_alien_prize.png .
+COPY alien_prize.png .
+
+COPY start_game.wav .
+COPY end_of_game.wav .
+COPY shoot_sound.wav .
+COPY collect_prize.wav .
+
 
 COPY special_alien.py .
 COPY spaceship_game.py .

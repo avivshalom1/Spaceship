@@ -4,10 +4,11 @@ import math
 
 class Alien:
     screen = None
-    alien_image = None
     
     def __init__(self, screen, alien_image, spaceship):
         distance  = 0
+        self.image = alien_image
+        self.is_killed = False
 
         while(distance < 300):
             self.x = random.randint(0, screen.get_width())
@@ -17,5 +18,5 @@ class Alien:
         self.screen = screen
 
     def draw(self):
-        self.alien_rect = self.alien_image.get_rect(center = (self.x , self.y))
-        self.screen.blit(self.alien_image, self.alien_rect)
+        self.alien_rect = self.image.get_rect(center = (self.x , self.y))
+        self.screen.blit(self.image, self.alien_rect)

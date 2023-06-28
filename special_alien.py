@@ -7,7 +7,6 @@ from special_alien_bullet import SpecialAlienBullet
 
 class SpecialAlien:
     screen = None
-    alien_image = None
 
     def __init__(self, screen, special_alien_image, special_alien_bullet_image, spaceship):
         distance  = 0
@@ -23,15 +22,18 @@ class SpecialAlien:
         self.bullet_interval = 0
         self.bullet_timer = 0
         self.bullets = []
+        self.image = special_alien_image
+        self.is_killed = False
 
     def draw(self, spaceship_x, spaceship_y):
 
-        self.special_alien_rect = self.special_alien_image.get_rect(center = (self.x , self.y))
-        self.screen.blit(self.special_alien_image, self.special_alien_rect)
+        self.special_alien_rect = self.image.get_rect(center = (self.x , self.y))
+        self.screen.blit(self.image, self.special_alien_rect)
 
-        for bullet in self.bullets:
-            bullet.update(spaceship_x, spaceship_y)
-            bullet.draw()
+        if(self.is_killed == False):
+            for bullet in self.bullets:
+                bullet.update(spaceship_x, spaceship_y)
+                bullet.draw()
 
 
     def shoot(self):
@@ -39,7 +41,7 @@ class SpecialAlien:
         current_time = pygame.time.get_ticks()
 
         if self.bullet_interval == 0:
-            self.bullet_interval = 2
+            self.bullet_interval = 4
             self.bullet_timer = pygame.time.get_ticks() 
 
         if self.bullet_interval < (current_time - self.bullet_timer) / 1000.0:

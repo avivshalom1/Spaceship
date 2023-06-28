@@ -1,0 +1,36 @@
+# default.pa
+
+### Automatically load driver modules for Bluetooth hardware
+.ifexists module-bluetooth-policy.so
+load-module module-bluetooth-policy
+.endif
+
+### Automatically restore the volume of streams and devices
+.ifexists module-stream-restore.so
+load-module module-stream-restore
+.endif
+
+### Automatically restore the default sink/source when changed by the user
+.ifexists module-default-device-restore.so
+load-module module-default-device-restore
+.endif
+
+### Automatically move streams to the default sink if the sink they are
+### currently outputting to becomes unavailable
+.ifexists module-rescue-streams.so
+load-module module-rescue-streams
+.endif
+
+### Load audio drivers statically
+.ifexists module-alsa-sink.so
+load-module module-alsa-sink device="pulse" sink_name="alsa_output.pci-0000_00_1b.0.analog-stereo"
+.endif
+
+.ifexists module-alsa-source.so
+load-module module-alsa-source device="pulse" source_name="alsa_input.pci-0000_00_1b.0.analog-stereo"
+.endif
+
+### Make some devices default
+set-default-sink alsa_output.pci-0000_00_1b.0.analog-stereo
+set-default-source alsa_input.pci-0000_00_1b.0.analog-stereo
+

@@ -7,15 +7,22 @@ WORKDIR /Spaceship
 # Copy the game code into the container
 COPY . /Spaceship
 
+RUN apt-get update && apt-get install -y pulseaudio
+
 # Copy the requirements.txt file into the container
-COPY requirements.txt .
 COPY background.jpg .
 COPY spaceship.png .
-COPY explosion.png .
 COPY bullet.png .
 COPY alien.png .
 COPY special_alien.png .
 COPY special_alien_bullet.png .
+COPY special_alien_prize.png .
+COPY alien_prize.png .
+
+COPY start_game.wav .
+COPY end_of_game.wav .
+COPY shoot_sound.wav .
+COPY collect_prize.wav .
 
 COPY special_alien.py .
 COPY spaceship_game.py .
@@ -27,16 +34,16 @@ COPY bullet.py .
 COPY config.json .
 COPY config.py .
 
+COPY default.pa .
+
 # Install dependencies
 
 RUN python3 config.py
 RUN pip3 install pygame mysql-connector-python
 
-# Set the command to run the game
-CMD ["python", "spaceship_game.py"]
 
-#sudo docker build -t spaceship:latest .
-#sudo docker tag spaceship docker.pkg.github.com/avivshalom1/spaceship/spaceship:latest
-#sudo docker login docker.pkg.github.com -u avivshalom1 -p <TOKEN>
-#sudo docker push docker.pkg.github.com/avivshalom1/spaceship/spaceship
+# Set the command to run the game
+CMD pulseaudio --system -D --exit-idle-time=-1 && python spaceship_game.py
+#CMD ["python", "spaceship_game.py"]
+
 

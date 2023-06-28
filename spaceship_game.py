@@ -8,6 +8,8 @@ import string
 import json
 import random
 import time
+import subprocess
+import sys
 
 from alien import Alien
 from special_alien import SpecialAlien
@@ -16,6 +18,7 @@ from spaceship import Spaceship
 
 # Initialize Pygame
 pygame.init()
+pygame.mixer.init()
 
 # Read the configuration from the JSON file
 with open('config.json', 'r') as configfile:
@@ -71,23 +74,41 @@ spaceship_image = pygame.transform.scale(spaceship_image, (100, 100))
 background_image = pygame.image.load(config['images']['background']).convert()
 background_image = pygame.transform.scale(background_image, (screen.get_width(), screen.get_height()))
 
-explosion_image = pygame.image.load(config['images']['explosion']).convert_alpha()
-explosion_image = pygame.transform.scale(explosion_image, (300, 300))
-
 bullet_image = pygame.image.load(config['images']['bullet']).convert_alpha()
 bullet_image = pygame.transform.scale(bullet_image, (30, 30))
 
 special_alien_bullet_image = pygame.image.load(config['images']['special_alien_bullet']).convert_alpha()
-special_alien_bullet_image = pygame.transform.scale(special_alien_bullet_image, (30, 30))
+special_alien_bullet_image = pygame.transform.scale(special_alien_bullet_image, (20, 30))
 
 alien_image = pygame.image.load(config['images']['alien']).convert_alpha()
 alien_image = pygame.transform.scale(alien_image, (60, 60))
 Alien.alien_image = alien_image
 
+alien_prize_image = pygame.image.load(config['images']['alien_prize']).convert_alpha()
+alien_prize_image = pygame.transform.scale(alien_prize_image, (35, 45))
+
+special_alien_prize_image = pygame.image.load(config['images']['special_alien_prize']).convert_alpha()
+special_alien_prize_image = pygame.transform.scale(special_alien_prize_image, (55, 55))
+
+
 special_alien_image = pygame.image.load(config['images']['special_alien']).convert_alpha()
 special_alien_image = pygame.transform.scale(special_alien_image, (60, 60))
 SpecialAlien.alien_image = special_alien_image
 
+
+collect_prize_sound = pygame.mixer.Sound('collect_prize.wav')
+end_of_game_sound = pygame.mixer.Sound('end_of_game.wav')
+start_game_sound = pygame.mixer.Sound('start_game.wav')
+dead_alien_sound = pygame.mixer.Sound('dead_alien.mp3')
+shoot_sound = pygame.mixer.Sound('shoot_sound.wav')
+shoot_sound.set_volume(0.3)
+
+pygame.mixer.set_num_channels(5)  # Adjust the number of channels as needed
+collect_prize_channel = pygame.mixer.Channel(0)  # Channel for sound1
+shoot_channel = pygame.mixer.Channel(1)  # Channel for sound2
+end_of_game_channel = pygame.mixer.Channel(2)  # Channel for sound2
+dead_alien_channel = pygame.mixer.Channel(3)  # Channel for sound2
+start_game_channel = pygame.mixer.Channel(4)  # Channel for sound2
 
 font = pygame.font.Font(None, 80)
 
@@ -99,7 +120,6 @@ angle_rate = config['gameplay']['angle_rate']
 rotate_angle = 0.0
 
 enter_key_pressed = False
-is_exploding = False
 
 explosion_duration = config['gameplay']['explosion_duration']
 spawn_interval = 0
@@ -107,8 +127,9 @@ special_spawn_interval = 3
 explosion_timer = 0.0
 alien_timer = 0.0
 special_alien_timer = 0.0
-
+bullet_delay = 30
 current_time = 0
+last_bullet_time = 0
 
 # Initializing list of Bullets
 spaceship = Spaceship(screen.get_width() // 2, 1000, rotate_angle, screen, spaceship_image)
@@ -169,7 +190,8 @@ def DrawScore(score):
 
 def DrawBullets(rotate_angle):
     for bullet in bullets:
-        bullet.draw()
+        if bullet.is_used == False:
+            bullet.draw()
 
     for bullet in bullets:
         if not screen.get_rect().colliderect(bullet.rotated_bullet_rect):
@@ -186,6 +208,7 @@ def DrawSpecialAliens():
         special_alien.shoot()
 
 def HandleEndOfGame(score):
+    
     if score > 10 and player_name != "":
         values = (player_name.strip(), score, datetime.date.today(), datetime.datetime.now().time())
         cursor.execute(insert_query, values)
@@ -195,49 +218,106 @@ def HandleEndOfGame(score):
     pygame.quit()
     sys.exit()
 
+def RestartGame():
+    global score
+    global spawn_interval
+    global enter_key_pressed
+    global special_spawn_interval
+    global explosion_timer
+    global alien_timer
+    global special_alien_timer
+    global player_name
+    global rotate_angle
+    global current_time
+
+    enter_key_pressed = False
+    spaceship.rotate_angle = 0
+    score = 0
+    bullets.clear()
+    aliens.clear()
+    special_aliens.clear()
+    alien_timer = 0.0
+    special_alien_timer = 0.0
+    player_name = ""
+    spaceship.x = screen.get_width() // 2
+    spaceship.x = 1000
+    rotate_angle = 0
+    current_time = 0
+    spawn_interval = 0
+    special_spawn_interval = 0
+
+
+def InsertScore():
+    if score > 10 and player_name != "":
+        values = (player_name.strip(), score, datetime.date.today(), datetime.datetime.now().time())
+        cursor.execute(insert_query, values)
+        conn.commit()    
+
 def CheckForCollision():
     global score
 
+
     for alien in aliens:
         distance = math.sqrt((spaceship.x - alien.x)**2 + (spaceship.y - alien.y)**2)
-        if distance < 50: 
-            HandleEndOfGame(score)
+        if distance < 50:
+            if alien.is_killed == True:
+                collect_prize_channel.play(collect_prize_sound)
+                score += 3
+                aliens.remove(alien)
+
+            else:
+                end_of_game_channel.play(end_of_game_sound)
+                InsertScore()
+                RestartGame()
+
 
     for special_alien in special_aliens:
         distance = math.sqrt((spaceship.x - special_alien.x)**2 + (spaceship.y - special_alien.y)**2)
         if distance < 50: 
-            HandleEndOfGame(score)
+            if special_alien.is_killed == True:
+                collect_prize_channel.play(collect_prize_sound)
+                score += 5
+                special_aliens.remove(special_alien)
+
+            else:
+                end_of_game_channel.play(end_of_game_sound)
+                InsertScore()
+                RestartGame()
+
 
     for special_alien in special_aliens:
         for bullet in special_alien.bullets:
             distance = math.sqrt((spaceship.x - bullet.x)**2 + (spaceship.y - bullet.y)**2)
             if distance < 15: 
-                score -= 1
+                score -= 5
                 special_alien.bullets.remove(bullet)
         
-
 
 def CheckForDeadAliens(score):
     for bullet in bullets:
         for alien in aliens:
             distance = math.sqrt((bullet.x - alien.x)**2 + (bullet.y - alien.y)**2)
-            if distance < 20: 
-                bullets.remove(bullet)
-                aliens.remove(alien)
-                score += 10
+            if distance < 20:
+                dead_alien_channel.play(dead_alien_sound)
+                bullet.is_used = True
+                alien.is_killed = True
+                alien.image = alien_prize_image
+                score += 5
 
         for special_alien in special_aliens:
             distance = math.sqrt((bullet.x - special_alien.x)**2 + (bullet.y - special_alien.y)**2)
             if distance < 20: 
-                bullets.remove(bullet)
-                special_aliens.remove(special_alien)
-                score += 15
+                dead_alien_channel.play(dead_alien_sound)
+                bullet.is_used = True
+                special_alien.is_killed = True
+                special_alien.image = special_alien_prize_image
+                score += 10
 
     return score
 
 
 def UpdateLocations():
-    spaceship.update(is_exploding, rotate_angle)      
+    spaceship.update(rotate_angle)
 
     for bullet in bullets:
         bullet.update()
@@ -246,52 +326,49 @@ def UpdateLocations():
 def HandlePressedKey():
 
     global rotate_angle
+    global score
+    global last_bullet_time
+    global current_time
 
     if keys[pygame.K_UP]:
         spaceship.speed *= 1.5
 
     if keys[pygame.K_LEFT]:
-        rotate_angle += angle_rate * (not is_exploding)
+        rotate_angle += angle_rate
 
     if keys[pygame.K_RIGHT]:
-        rotate_angle -= angle_rate * (not is_exploding)
+        rotate_angle -= angle_rate
 
     if keys[pygame.K_DOWN]:
         spaceship.speed = 1
 
     if keys[pygame.K_SPACE]:
         if len(bullets) < 100:
-            bullets.append(Bullet(spaceship.x, spaceship.y, rotate_angle))
-        
+            if (current_time - last_bullet_time) > bullet_delay:
+                bullets.append(Bullet(spaceship.x, spaceship.y, rotate_angle))
+                last_bullet_time = current_time
+                shoot_channel.play(shoot_sound)
+
     if keys[pygame.K_ESCAPE]:
-        pygame.quit()
-        sys.exit()
+        HandleEndOfGame(score)
 
 
 def CheckIfOutOfSpace():
 
-    global is_exploding
     global explosion_timer
     global explosion_duration
 
     # Check if the spaceship is within the boundaries of the screen
     if not screen.get_rect().colliderect(spaceship.rotated_spaceship_rect):
-        is_exploding = True
-        if explosion_timer == 0:
-            explosion_timer = pygame.time.get_ticks() 
-
-    current_time = pygame.time.get_ticks()
-
-    if is_exploding:
-        elapsed_time = (current_time - explosion_timer) / 1000.0  # Convert to seconds
-        # Check if the explosion duration has elapsed
-        if elapsed_time < explosion_duration:
-            spaceship.spaceship_image = explosion_image
-
-        else:
-            HandleEndOfGame(score)
-
-    return current_time
+        if spaceship.x < 0:
+            spaceship.x = screen.get_width()  
+        elif spaceship.x > screen.get_width():
+            spaceship.x = 0
+            
+        if spaceship.y < 0:
+            spaceship.y = screen.get_height()  
+        elif spaceship.y > screen.get_height():
+            spaceship.y = 0  
 
 
 def SpawnAlien(spaceship):
@@ -340,6 +417,7 @@ def HandleInsertingName():
 score = 0
 
 while True:
+    current_time = pygame.time.get_ticks()
 
     HandleInsertingName()
 
@@ -347,6 +425,7 @@ while True:
 
     if keys[pygame.K_RETURN]:
         enter_key_pressed = True
+        start_game_channel.play(start_game_sound)
 
     if not enter_key_pressed:
         DisplayWelcomeScreen()
@@ -357,9 +436,9 @@ while True:
 
         HandlePressedKey()
 
-        current_time = CheckIfOutOfSpace()
+        CheckIfOutOfSpace()
 
-        DrawSpaceshipInSpace()
+        score = CheckForDeadAliens(score)
 
         SpawnAlien(spaceship)
 
@@ -367,7 +446,7 @@ while True:
 
         UpdateLocations()
 
-        score = CheckForDeadAliens(score)
+        DrawSpaceshipInSpace()
 
         CheckForCollision()
 
@@ -381,4 +460,4 @@ while True:
 
         pygame.display.flip()
 
- #main branch
+ #pulke branch

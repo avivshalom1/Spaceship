@@ -3,7 +3,7 @@ import json
 # Create the configuration dictionary
 config = {
     "database": {
-        "host": "10.1.0.240",
+        "host": "10.10.2.41",
         "name": "spaceship_scoring_board",
         "user": "spaceship_user",
         "password": "Evi1995!!"
@@ -15,7 +15,10 @@ config = {
         "bullet": "bullet.png",
         "alien": "alien.png",
         "special_alien": "special_alien.png",
-        "special_alien_bullet": "special_alien_bullet.png"
+        "special_alien_bullet": "special_alien_bullet.png",
+        "alien_prize": "alien_prize.png",
+        "special_alien_prize": "special_alien_prize.png",
+
     },
     "gameplay": {
         "speed": 3,

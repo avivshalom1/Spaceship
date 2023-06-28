@@ -7,8 +7,6 @@ WORKDIR /Spaceship
 # Copy the game code into the container
 COPY . /Spaceship
 
-RUN apt-get update && apt-get install -y pulseaudio
-
 # Copy the requirements.txt file into the container
 COPY background.jpg .
 COPY spaceship.png .
@@ -19,10 +17,10 @@ COPY special_alien_bullet.png .
 COPY special_alien_prize.png .
 COPY alien_prize.png .
 
-COPY start_game.wav .
-COPY end_of_game.wav .
-COPY shoot_sound.wav .
-COPY collect_prize.wav .
+#COPY start_game.wav .
+#COPY end_of_game.wav .
+#COPY shoot_sound.wav .
+#COPY collect_prize.wav .
 
 COPY special_alien.py .
 COPY spaceship_game.py .
@@ -34,7 +32,7 @@ COPY bullet.py .
 COPY config.json .
 COPY config.py .
 
-COPY default.pa .
+#COPY default.pa .
 
 # Install dependencies
 
@@ -43,7 +41,6 @@ RUN pip3 install pygame mysql-connector-python
 
 
 # Set the command to run the game
-CMD pulseaudio --system -D --exit-idle-time=-1 && python spaceship_game.py
-#CMD ["python", "spaceship_game.py"]
+CMD ["python", "spaceship_game.py"]
 
 

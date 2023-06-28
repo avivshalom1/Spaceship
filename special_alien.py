@@ -30,10 +30,13 @@ class SpecialAlien:
         self.special_alien_rect = self.image.get_rect(center = (self.x , self.y))
         self.screen.blit(self.image, self.special_alien_rect)
 
-        if(self.is_killed == False):
-            for bullet in self.bullets:
+        for bullet in self.bullets:
+            if(self.is_killed == False):
                 bullet.update(spaceship_x, spaceship_y)
                 bullet.draw()
+            else:
+                self.bullets.remove(bullet)
+        
 
 
     def shoot(self):

@@ -18,7 +18,7 @@ from spaceship import Spaceship
 
 # Initialize Pygame
 pygame.init()
-pygame.mixer.init()
+#pygame.mixer.init()
 
 # Read the configuration from the JSON file
 with open('config.json', 'r') as configfile:
@@ -96,19 +96,19 @@ special_alien_image = pygame.transform.scale(special_alien_image, (60, 60))
 SpecialAlien.alien_image = special_alien_image
 
 
-collect_prize_sound = pygame.mixer.Sound('collect_prize.wav')
-end_of_game_sound = pygame.mixer.Sound('end_of_game.wav')
-start_game_sound = pygame.mixer.Sound('start_game.wav')
-dead_alien_sound = pygame.mixer.Sound('dead_alien.mp3')
-shoot_sound = pygame.mixer.Sound('shoot_sound.wav')
-shoot_sound.set_volume(0.3)
+#collect_prize_sound = pygame.mixer.Sound('collect_prize.wav')
+#end_of_game_sound = pygame.mixer.Sound('end_of_game.wav')
+#start_game_sound = pygame.mixer.Sound('start_game.wav')
+#dead_alien_sound = pygame.mixer.Sound('dead_alien.mp3')
+#shoot_sound = pygame.mixer.Sound('shoot_sound.wav')
+#shoot_sound.set_volume(0.3)
 
-pygame.mixer.set_num_channels(5)  # Adjust the number of channels as needed
-collect_prize_channel = pygame.mixer.Channel(0)  # Channel for sound1
-shoot_channel = pygame.mixer.Channel(1)  # Channel for sound2
-end_of_game_channel = pygame.mixer.Channel(2)  # Channel for sound2
-dead_alien_channel = pygame.mixer.Channel(3)  # Channel for sound2
-start_game_channel = pygame.mixer.Channel(4)  # Channel for sound2
+#pygame.mixer.set_num_channels(5)  # Adjust the number of channels as needed
+#collect_prize_channel = pygame.mixer.Channel(0)  # Channel for sound1
+#shoot_channel = pygame.mixer.Channel(1)  # Channel for sound2
+#end_of_game_channel = pygame.mixer.Channel(2)  # Channel for sound2
+#dead_alien_channel = pygame.mixer.Channel(3)  # Channel for sound2
+#start_game_channel = pygame.mixer.Channel(4)  # Channel for sound2
 
 font = pygame.font.Font(None, 80)
 
@@ -261,12 +261,12 @@ def CheckForCollision():
         distance = math.sqrt((spaceship.x - alien.x)**2 + (spaceship.y - alien.y)**2)
         if distance < 50:
             if alien.is_killed == True:
-                collect_prize_channel.play(collect_prize_sound)
+                #collect_prize_channel.play(collect_prize_sound)
                 score += 3
                 aliens.remove(alien)
 
             else:
-                end_of_game_channel.play(end_of_game_sound)
+                #end_of_game_channel.play(end_of_game_sound)
                 InsertScore()
                 RestartGame()
 
@@ -275,12 +275,12 @@ def CheckForCollision():
         distance = math.sqrt((spaceship.x - special_alien.x)**2 + (spaceship.y - special_alien.y)**2)
         if distance < 50: 
             if special_alien.is_killed == True:
-                collect_prize_channel.play(collect_prize_sound)
+                #collect_prize_channel.play(collect_prize_sound)
                 score += 5
                 special_aliens.remove(special_alien)
 
             else:
-                end_of_game_channel.play(end_of_game_sound)
+                #end_of_game_channel.play(end_of_game_sound)
                 InsertScore()
                 RestartGame()
 
@@ -298,7 +298,7 @@ def CheckForDeadAliens(score):
         for alien in aliens:
             distance = math.sqrt((bullet.x - alien.x)**2 + (bullet.y - alien.y)**2)
             if distance < 20:
-                dead_alien_channel.play(dead_alien_sound)
+                #dead_alien_channel.play(dead_alien_sound)
                 bullet.is_used = True
                 alien.is_killed = True
                 alien.image = alien_prize_image
@@ -307,7 +307,7 @@ def CheckForDeadAliens(score):
         for special_alien in special_aliens:
             distance = math.sqrt((bullet.x - special_alien.x)**2 + (bullet.y - special_alien.y)**2)
             if distance < 20: 
-                dead_alien_channel.play(dead_alien_sound)
+                #dead_alien_channel.play(dead_alien_sound)
                 bullet.is_used = True
                 special_alien.is_killed = True
                 special_alien.image = special_alien_prize_image
@@ -347,7 +347,7 @@ def HandlePressedKey():
             if (current_time - last_bullet_time) > bullet_delay:
                 bullets.append(Bullet(spaceship.x, spaceship.y, rotate_angle))
                 last_bullet_time = current_time
-                shoot_channel.play(shoot_sound)
+                #shoot_channel.play(shoot_sound)
 
     if keys[pygame.K_ESCAPE]:
         HandleEndOfGame(score)
@@ -425,7 +425,7 @@ while True:
 
     if keys[pygame.K_RETURN]:
         enter_key_pressed = True
-        start_game_channel.play(start_game_sound)
+        #start_game_channel.play(start_game_sound)
 
     if not enter_key_pressed:
         DisplayWelcomeScreen()
@@ -460,4 +460,4 @@ while True:
 
         pygame.display.flip()
 
- #pulke branch
+ #main branch

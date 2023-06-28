@@ -192,6 +192,9 @@ def DrawBullets(rotate_angle):
     for bullet in bullets:
         if bullet.is_used == False:
             bullet.draw()
+        else:
+            bullets.remove(bullet)
+
 
     for bullet in bullets:
         if not screen.get_rect().colliderect(bullet.rotated_bullet_rect):
@@ -299,19 +302,22 @@ def CheckForDeadAliens(score):
             distance = math.sqrt((bullet.x - alien.x)**2 + (bullet.y - alien.y)**2)
             if distance < 20:
                 #dead_alien_channel.play(dead_alien_sound)
-                bullet.is_used = True
+                if alien.is_killed == False:
+                    bullet.is_used = True
+                    score += 5
                 alien.is_killed = True
                 alien.image = alien_prize_image
-                score += 5
 
         for special_alien in special_aliens:
             distance = math.sqrt((bullet.x - special_alien.x)**2 + (bullet.y - special_alien.y)**2)
             if distance < 20: 
                 #dead_alien_channel.play(dead_alien_sound)
-                bullet.is_used = True
+                if special_alien.is_killed == False:
+                    bullet.is_used = True
+                    score += 10
                 special_alien.is_killed = True
                 special_alien.image = special_alien_prize_image
-                score += 10
+                 
 
     return score
 

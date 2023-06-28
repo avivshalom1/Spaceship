@@ -34,9 +34,6 @@ class SpecialAlien:
             if(self.is_killed == False):
                 bullet.update(spaceship_x, spaceship_y)
                 bullet.draw()
-            else:
-                self.bullets.remove(bullet)
-        
 
 
     def shoot(self):

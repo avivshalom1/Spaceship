@@ -31,13 +31,8 @@ COPY bullet.py .
 
 COPY config.json .
 
-#COPY default.pa .
-
 # Install dependencies
-
-RUN python3 config.py
 RUN pip3 install pygame mysql-connector-python
-
 
 # Set the command to run the game
 CMD ["python", "spaceship_game.py"]

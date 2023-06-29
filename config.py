@@ -1,8 +1,17 @@
 import json
-import socket
+import netifaces
 
-hostname = socket.gethostname()
-host = socket.gethostbyname(hostname)
+def get_ip_address(interface_name):
+    try:
+        interface_info = netifaces.ifaddresses(interface_name)
+        ipv4_address = interface_info[netifaces.AF_INET][0]['addr']
+        return ipv4_address
+    except KeyError:
+        return None
+
+interface = "wlp3s0"
+host = get_ip_address(interface)
+
 
 # Create the configuration dictionary
 config = {

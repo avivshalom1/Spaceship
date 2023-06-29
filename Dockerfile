@@ -30,7 +30,6 @@ COPY spaceship.py .
 COPY bullet.py .
 
 COPY config.json .
-COPY config.py .
 
 #COPY default.pa .
 

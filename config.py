@@ -1,9 +1,13 @@
 import json
+import socket
+
+hostname = socket.gethostname()
+host = socket.gethostbyname(hostname)
 
 # Create the configuration dictionary
 config = {
     "database": {
-        "host": "10.10.2.41",
+        "host": host,
         "name": "spaceship_scoring_board",
         "user": "spaceship_user",
         "password": "Evi1995!!"

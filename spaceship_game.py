@@ -7,8 +7,6 @@ import datetime
 import string
 import json
 import random
-import time
-import subprocess
 import sys
 
 from alien import Alien
@@ -90,25 +88,9 @@ alien_prize_image = pygame.transform.scale(alien_prize_image, (35, 45))
 special_alien_prize_image = pygame.image.load(config['images']['special_alien_prize']).convert_alpha()
 special_alien_prize_image = pygame.transform.scale(special_alien_prize_image, (55, 55))
 
-
 special_alien_image = pygame.image.load(config['images']['special_alien']).convert_alpha()
 special_alien_image = pygame.transform.scale(special_alien_image, (60, 60))
 SpecialAlien.alien_image = special_alien_image
-
-
-#collect_prize_sound = pygame.mixer.Sound('collect_prize.wav')
-#end_of_game_sound = pygame.mixer.Sound('end_of_game.wav')
-#start_game_sound = pygame.mixer.Sound('start_game.wav')
-#dead_alien_sound = pygame.mixer.Sound('dead_alien.mp3')
-#shoot_sound = pygame.mixer.Sound('shoot_sound.wav')
-#shoot_sound.set_volume(0.3)
-
-#pygame.mixer.set_num_channels(5)  # Adjust the number of channels as needed
-#collect_prize_channel = pygame.mixer.Channel(0)  # Channel for sound1
-#shoot_channel = pygame.mixer.Channel(1)  # Channel for sound2
-#end_of_game_channel = pygame.mixer.Channel(2)  # Channel for sound2
-#dead_alien_channel = pygame.mixer.Channel(3)  # Channel for sound2
-#start_game_channel = pygame.mixer.Channel(4)  # Channel for sound2
 
 font = pygame.font.Font(None, 80)
 

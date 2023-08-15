@@ -3,6 +3,10 @@
 ## Game Overview 
 This is a simple spaceship game built using the Pygame library. The objective of the game is to control a spaceship and shoot down aliens while avoiding collisions. Your score increases for every alien you successfully destroy.
 
+![Alt Text](video.gif)
+
+
+
 ## How to Run
 
 install from command line:

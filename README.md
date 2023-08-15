@@ -6,7 +6,7 @@ This is a simple spaceship game built using the Pygame library. The objective of
 
 
 <center>
-  ![Animated GIF](video.gif)
+	![Animated GIF](video.gif)
 </center>
 
 

@@ -5,7 +5,10 @@ This is a simple spaceship game built using the Pygame library. The objective of
 
 
 
-![Alt Text](video.gif)
+<center>
+  ![Animated GIF](video.gif)
+</center>
+
 
 
 

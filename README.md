@@ -3,12 +3,16 @@
 ## Game Overview 
 This is a simple spaceship game built using the Pygame library. The objective of the game is to control a spaceship and shoot down aliens while avoiding collisions. Your score increases for every alien you successfully destroy.
 
+![Alt Text](video.gif)
+
+
+
 ## How to Run
 
 install from command line:
 ```
 sudo apt install docker
-sudo docker pull ghcr.io/avivshalom1/spaceship:latest
+sudo docker pull ghcr.io/avivshalom1/spaceship/spaceship:latest
 ```
 
 run this command:
@@ -17,7 +21,7 @@ xhost +local:docker
 ```
 and than run the game:
 ```
-sudo docker run --rm -it --volume /tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY ghcr.io/avivshalom1/spaceship:latest
+sudo docker run --rm -it --volume /tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY ghcr.io/avivshalom1/spaceship/spaceship:latest
 ```
 
 ## How to Play
